@@ -1,0 +1,61 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+# Configure proxy and install python to support ansible
+- name: Configure proxy, DNS and nameserver
+  include_tasks: configure_proxy_dns.yml
+
+- name: Install python which is required to run ansible modules (Debian)
+  raw: apt-get update && apt-get install -y python3
+  ignore_errors: yes
+
+- name: Install python which is required to run ansible modules (Red Hat)
+  raw: yum update && yum install -y python3
+  ignore_errors: yes
+
+- name: Enable root SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin prohibit\-password'
+    line: 'PermitRootLogin yes'
+
+- name: Create development directory
+  file:
+    path: /opt/stack
+    owner: "{{ hostvars[inventory_hostname].ansible_user }}"
+    group: "{{ hostvars[inventory_hostname].ansible_user }}"
+    mode: 0755
+    state: directory
+
+- name: Change shell for root
+  raw: sudo usermod -s /bin/bash root
+
+- name: Change shell for defined user
+  raw: sudo usermod -s /bin/bash "{{ hostvars[inventory_hostname].ansible_user }}"
+
+- name: Update configuration files
+  include_tasks: update_conf_files.yml
+
+- name: Install packets
+  include_tasks: install_packets.yml
+
+- name: Generate and apply SSH keys
+  include_tasks: update_keys.yml
+
+- name: Install PyCharm
+  include_tasks: install_pycharm.yml
+
+- name: Configure screen
+  include_tasks: configure_screen.yml
+
+- name: Configure git
+  include_tasks: configure_git.yml

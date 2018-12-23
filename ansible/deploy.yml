@@ -1,0 +1,69 @@
+# Derived from: https://github.com/opnfv/yardstick
+#
+# Copyright (c) 2018 Intel Corporation.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+- hosts: deployhost
+  vars:
+    rs_file: "{{ RS_FILE }}"
+    domain_type: "{{ DOMAIN_TYPE }}"
+
+  tasks:
+  - set_fact:
+      proxy_host: "{{ lookup('env', 'http_proxy') | urlsplit('hostname') }}"
+      proxy_proto: "{{ lookup('env', 'http_proxy') | urlsplit('scheme') }}"
+      proxy_port: "{{ lookup('env', 'http_proxy') | urlsplit('port') }}"
+
+  - set_fact:
+      proxy_host_ip: "{{ lookup('dig', proxy_host, errors='ignore') }}"
+
+  roles:
+    - role: install_dependencies
+      tags: build_nodes
+    - role: destroy_previous_configuration
+      tags: destroy_nodes
+    - role: check_requirements
+      tags: build_nodes
+    - role: create_network
+      tags: build_nodes
+    - role: create_vms
+      tags: build_nodes
+    - role: prepare_vms
+      tags: build_nodes
+
+
+- hosts: deployhost
+  vars:
+    rs_file: "{{ RS_FILE }}"
+
+  roles:
+    - create_hosts_group
+
+
+- hosts: deploynodes
+  become: yes
+  vars:
+    rs_file: "{{ RS_FILE }}"
+
+  roles:
+  - rampup_nodes
+
+
+# This should be the last step.
+- hosts: deployhost
+  vars:
+    rs_file: "{{ RS_FILE }}"
+
+  roles:
+    - show_info

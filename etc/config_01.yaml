@@ -1,0 +1,33 @@
+nodes:
+  - name: VM1
+    openstack_node: vm1
+    hostname: controller
+    interfaces:
+      - network: management
+        ip: 192.168.200.10
+        netmask: 255.255.255.0
+      - network: traffic
+        ip: 192.168.210.10
+        netmask: 255.255.255.0
+    user: stack
+    password: stack
+    root_password: password
+    image: /opt/stack/images/xenial_cloudimg.img
+    disk: 10000
+    ram: 4096
+    vcpus: 2
+
+networks:
+  - name: management
+    default_gateway: True
+    host_ip: 192.168.200.1
+    netmask: 255.255.255.0
+    dhcp_ip_start: 192.168.200.200
+    dhcp_ip_end: 192.168.200.250
+
+  - name: traffic
+    default_gateway: False # This parameter is not mandatory, default value: False
+    host_ip: 192.168.210.1
+    netmask: 255.255.255.0
+    dhcp_ip_start: 192.168.210.200
+    dhcp_ip_end: 192.168.210.250

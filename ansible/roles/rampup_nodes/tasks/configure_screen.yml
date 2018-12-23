@@ -1,0 +1,38 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+- name: Add screen default configuration
+  copy:
+    dest: /etc/screenrc
+    content: |
+      # skip the startup message
+      startup_message off
+      # go to home dir
+      chdir
+      # Automatically detach on hangup.
+      autodetach on
+      # Change default scrollback value for new windows
+      defscrollback 10000
+      # start with visual bell as default
+      vbell off
+      vbell_msg "bell off %t (%n)"
+      # look and feel
+      caption always "%{= bb}%{+b w}%n %t %h %=%l %H %c"
+      hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+      activity "Activity in %t(%n)"
+      shelltitle "shell"
+      shell -$SHELL
+      # Default screens
+      screen -t "root"
+      screen -t "devstack"
+      # Select first screen
+      select 1
