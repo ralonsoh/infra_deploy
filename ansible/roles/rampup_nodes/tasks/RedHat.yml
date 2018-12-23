@@ -21,8 +21,7 @@
   yum:
     name: "{{ item }}"
   with_items:
-    - python-tox
-    - python-dev
+    - python3-dev
     - libffi-dev
     - libssl-dev
     - python3-dev
@@ -33,7 +32,6 @@
     - apparmor-utils
     - docker.io
     - libvirt-bin
-    - python-setuptools
     - build-essential
   environment: "{{ proxy_env }}"
 
@@ -50,6 +48,8 @@
     - docker
     - tox
     - shade
+    - passlib
+    - setuptools
   environment: "{{ proxy_env }}"
 
 - name: Remove conflicting packages

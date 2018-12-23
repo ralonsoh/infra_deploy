@@ -17,19 +17,6 @@
     file: "{{ rs_file }}"
     name: infra_deploy_vars
 
-- name: Install setuptools
-  apt:
-    name: python-setuptools
-
-- name: Install pip
-  shell: easy_install pip
-  environment: "{{ proxy_env }}"
-
-- name: Install dependency for dns dig
-  pip:
-    name: dnspython
-    state: latest
-
 - set_fact:
     block_str: "{{ block_str | default('') + item.interfaces[0].ip + ' ' + item.hostname + '\n'}}"
   with_items: "{{ infra_deploy_vars.nodes }}"

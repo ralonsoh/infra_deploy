@@ -48,6 +48,9 @@
 - name: Install packets
   include_tasks: install_packets.yml
 
+- name: Change root password
+  include_tasks: change_root_password.yml
+
 - name: Generate and apply SSH keys
   include_tasks: update_keys.yml
 

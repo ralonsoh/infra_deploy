@@ -28,11 +28,19 @@
   with_items:
     - python-pip
     - python-libvirt
-    - python-lxml
-    - python-netaddr
     - python3-pip
     - python3-libvirt
-    - python3-lxml
-    - python3-netaddr
     - genisoimage
   when: ansible_distribution_major_version|int >= 18
+
+- name: Update pip ansible docker
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - dnspython
+    - passlib
+    - setuptools
+    - lxml
+    - netaddr
+  environment: "{{ proxy_env }}"

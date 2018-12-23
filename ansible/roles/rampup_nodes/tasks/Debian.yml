@@ -21,12 +21,9 @@
   apt:
     name: "{{ item }}"
   with_items:
-    - python-tox
-    - python-dev
     - libffi-dev
     - libssl-dev
     - python3-dev
-    - python-pip
     - python3-pip
     - ethtool
     - ipmitool
@@ -35,7 +32,6 @@
     - apparmor-utils
     - docker.io
     - libvirt-bin
-    - python-setuptools
     - build-essential
     - virt-manager
     - screen
@@ -55,6 +51,8 @@
     - docker
     - tox
     - shade
+    - passlib
+    - setuptools
   environment: "{{ proxy_env }}"
 
 - name: Remove conflicting packages
