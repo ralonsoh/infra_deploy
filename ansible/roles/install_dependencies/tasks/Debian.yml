@@ -31,6 +31,7 @@
     - python3-pip
     - python3-libvirt
     - genisoimage
+    - kvm
   when: ansible_distribution_major_version|int >= 18
 
 - name: Update pip ansible docker
@@ -44,3 +45,15 @@
     - lxml
     - netaddr
   environment: "{{ proxy_env }}"
+
+- name: Start service libvirt (Ubuntu Xenial)
+  service:
+    name: libvirt-bin
+    state: started
+  ignore_errors: yes
+
+- name: Start service libvirt (any other OS)
+  service:
+    name: libvirtd
+    state: started
+  ignore_errors: yes
