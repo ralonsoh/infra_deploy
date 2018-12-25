@@ -13,3 +13,9 @@
 # limitations under the License.
 ---
 - include_tasks: "{{ ansible_os_family }}.yml"
+
+- name: Enable nested virtualization
+  include_tasks: kvm_module.yml
+
+- name: Enable virtualization services
+  include_tasks: services.yml
