@@ -10,15 +10,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Check if nested virtualization is enabled (Intel)
+  set_fact:
+    nested: "{{ lookup('file', '/sys/module/kvm_intel/parameters/nested', errors='ignore') }}"
+
 - name: Remove kvm module (Intel)
   raw: modprobe -r kvm_intel
+  when: nested != "Y"
 
 - name: Enable kvm module with nested virtualization (Intel)
   raw: modprobe kvm_intel nested=1
+  when: nested != "Y"
 
-- name: Make nested virtualization configuration permanent
+- name: Make nested virtualization configuration permanent (Intel)
   copy:
     dest: /etc/modprobe.d/kvm.conf
     mode: 0644
     content: |
       options kvm_intel nested=1
+  when: nested != "Y"
