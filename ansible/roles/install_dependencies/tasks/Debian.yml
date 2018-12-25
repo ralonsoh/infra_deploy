@@ -17,22 +17,16 @@
     update_cache: yes
 
 - name: Install core packages
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
   with_items:
-    - python-libvirt
-    - genisoimage
-  when: ansible_distribution_major_version|int == 16
-
-- name: Install core packages
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
-  with_items:
-    - python-pip
-    - python-libvirt
     - python3-pip
-    - python3-libvirt
     - genisoimage
-    - kvm
-  when: ansible_distribution_major_version|int >= 18
+    - qemu-kvm
+    - pkg-config
+    - libvirt-dev
+    - sshpass
 
 - name: Update pip ansible docker
   pip:
@@ -44,16 +38,23 @@
     - setuptools
     - lxml
     - netaddr
+    - libvirt-python
   environment: "{{ proxy_env }}"
 
-- name: Start service libvirt (Ubuntu Xenial)
+- name: Restart service virtlogd
   service:
-    name: libvirt-bin
-    state: started
+    name: virtlogd
+    state: restarted
   ignore_errors: yes
 
-- name: Start service libvirt (any other OS)
+- name: Restart service libvirt (Ubuntu Xenial)
+  service:
+    name: libvirt-bin
+    state: restarted
+  ignore_errors: yes
+
+- name: Restart service libvirt (any other OS)
   service:
     name: libvirtd
-    state: started
+    state: restarted
   ignore_errors: yes

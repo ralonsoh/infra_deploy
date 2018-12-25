@@ -13,8 +13,8 @@ nodes:
     password: stack
     root_password: password
     image: /opt/stack/images/xenial_cloudimg.img
-    disk: 10000
-    ram: 4096
+    disk: 12000
+    ram: 8192
     vcpus: 2
 
 networks:
