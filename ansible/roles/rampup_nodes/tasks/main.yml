@@ -62,3 +62,6 @@
 
 - name: Configure git
   include_tasks: configure_git.yml
+
+- name: Configure SSH service
+  include_tasks: configure_sshd.yml

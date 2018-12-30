@@ -40,6 +40,7 @@
     - wireshark
     - vim
     - emacs
+    - x11-apps
   environment: "{{ proxy_env }}"
 
 - name: Update pip ansible docker
