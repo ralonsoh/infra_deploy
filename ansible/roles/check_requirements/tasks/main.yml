@@ -12,17 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include
-  include_vars:
-    file: "{{ rs_file }}"
-    name: infra_deploy_vars
-
 - name: Store total CPU, RAM, Disk requested resources
   set_fact:
-    vcpu_t: "{{ item.vcpus|int + vcpu_t | int }}"
-    vram_t: "{{ item.ram|int + vram_t | int }}"
-    disk_t: "{{ item.disk|int + disk_t | int }}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    vcpu_t: "{{ item.value.vcpus|int + vcpu_t | int }}"
+    vram_t: "{{ item.value.ram|int + vram_t | int }}"
+    disk_t: "{{ item.value.disk|int + disk_t | int }}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"
 
 - name: Fail if not enough RAM
   fail:
@@ -42,9 +37,9 @@
   set_fact:
     num_default_network_detected: "{{ num_default_network_detected | int + 1 }}"
   when:
-    - item.default_gateway is defined
-    - item.default_gateway == True
-  with_items: "{{ infra_deploy_vars.networks }}"
+    - item.value.default_gateway is defined
+    - item.value.default_gateway == True
+  with_dict: "{{ infra_deploy_vars.networks }}"
 
 - name: Fail if more than 1 or 0 default networks
   fail:

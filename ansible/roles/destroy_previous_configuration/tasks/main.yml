@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include input file
-  include_vars:
-    file: "{{ rs_file }}"
-    name: infra_deploy_vars
-
 - name: List virt-nets
   virt_net: command=list_nets
   register: virt_nets
@@ -26,8 +21,8 @@
   register: virt_vms
 
 - set_fact:
-    deploy_vms: "{{ deploy_vms | default([]) + [item.hostname] }}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    deploy_vms: "{{ deploy_vms | default([]) + [item.value.hostname] }}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"
 
 - name: Define old disk images to delete
   shell: virsh domblklist {{ item }} | awk '/\/.*/ { print $2 }'
@@ -47,8 +42,8 @@
   with_items: "{{ virt_vms.list_vms }}"
 
 - set_fact:
-    deploy_nets: "{{ deploy_nets | default([]) + [item.name] }}"
-  with_items: "{{ infra_deploy_vars.networks }}"
+    deploy_nets: "{{ deploy_nets | default([]) + [item.key] }}"
+  with_dict: "{{ infra_deploy_vars.networks }}"
 
 - name: Delete old networks
   include_tasks: delete_network.yml

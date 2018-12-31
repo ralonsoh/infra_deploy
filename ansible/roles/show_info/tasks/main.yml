@@ -18,8 +18,8 @@
 - name: Show information
   debug:
     msg:
-      - "Host: {{ item.hostname }}"
-      - "    IP: {{ item.interfaces[0].ip }}"
-      - "    User / password: {{ item.user }} / {{ item.password }}"
-      - "      --> ssh {{ item.user }}@{{ item.interfaces[0].ip }}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+      - "Host: {{ item.value.hostname }}"
+      - "    IP: {{ item.value.interfaces['management'].ip }}"
+      - "    User / password: {{ item.value.user }} / {{ item.value.password }}"
+      - "      --> ssh {{ item.value.user }}@{{ item.value.interfaces['management'].ip }}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"

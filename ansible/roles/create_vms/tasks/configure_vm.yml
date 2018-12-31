@@ -14,18 +14,18 @@
 ---
 - name: Remove directory
   file:
-    path: "{{ '/tmp/'+node_item.hostname }}"
+    path: "{{ '/tmp/'+node_item.value.hostname }}"
     state: absent
 
 - name: Create directory
   file:
-    path: "{{ '/tmp/'+node_item.hostname }}"
+    path: "{{ '/tmp/'+node_item.value.hostname }}"
     state: directory
     mode: 0755
 
 - name: Define user-data file name
   set_fact:
-    user_data: "{{ '/tmp/'+node_item.hostname+'/user-data' }}"
+    user_data: "{{ '/tmp/'+node_item.value.hostname+'/user-data' }}"
 
 - name: Define image-dir
   set_fact:
@@ -43,14 +43,14 @@
     content: |
       #cloud-config
       preserve_hostname: False
-      hostname: {{ node_item.hostname }}
+      hostname: {{ node_item.value.hostname }}
       output:
         all: ">> /var/log/cloud-init.log"
       ssh_pwauth: True
       users:
-          - name: {{ node_item.user }}
+          - name: {{ node_item.value.user }}
             lock-passwd: False
-            plain_text_passwd: {{ node_item.password }}
+            plain_text_passwd: {{ node_item.value.password }}
             chpasswd: { expire: False }
             sudo: ALL=(ALL) NOPASSWD:ALL
             ssh_pwauth: True
@@ -61,26 +61,9 @@
     state: absent
     regexp: "MARKER"
 
-- name: Define network-config file name
-  set_fact:
-    network_config: "{{ '/tmp/'+node_item.hostname+'/network-config' }}"
-
-- name: Create a new empty file for network-config
-  file:
-    path: "{{ network_config }}"
-    state: touch
-
-- name: Add network-data
-  blockinfile:
-    path: "{{ network_config }}"
-    marker: "MARKER"
-    content: |
-      version: 2
-      ethernets:
-
 - name: Define meta-data file name
   set_fact:
-    meta_data: "{{ '/tmp/'+node_item.hostname+'/meta-data' }}"
+    meta_data: "{{ '/tmp/'+node_item.value.hostname+'/meta-data' }}"
 
 - name: Create a new empty file for meta-data
   file:
@@ -92,8 +75,8 @@
     path: "{{ meta_data }}"
     marker: "MARKER"
     content: |
-      instance-id: {{ node_item.hostname }}
-      local-hostname: {{ node_item.hostname }}
+      instance-id: {{ node_item.value.hostname }}
+      local-hostname: {{ node_item.value.hostname }}
 
 - name: Remove the marker
   lineinfile:
@@ -103,7 +86,7 @@
 
 - name: Define xml file name
   set_fact:
-    xml_file: "{{ '/tmp/'+node_item.hostname+'/'+node_item.hostname+'.xml' }}"
+    xml_file: "{{ '/tmp/'+node_item.value.hostname+'/'+node_item.value.hostname+'.xml' }}"
 
 - name: Create a new empty file for xml file
   file:
@@ -131,9 +114,9 @@
     path: "{{ xml_file }}"
     xpath: /domain
     add_children:
-      - name: "{{ node_item.hostname }}"
-      - memory: "{{ node_item.ram }}"
-      - vcpu: "{{ node_item.vcpus }}"
+      - name: "{{ node_item.value.hostname }}"
+      - memory: "{{ node_item.value.ram }}"
+      - vcpu: "{{ node_item.value.vcpus }}"
       - os
       - cpu
       - devices
@@ -236,7 +219,7 @@
           name: qemu
           type: qcow2
       - source:
-          file: "{{ '/var/lib/libvirt/images/'+node_item.hostname+'.qcow2' }}"
+          file: "{{ '/var/lib/libvirt/images/'+node_item.value.hostname+'.qcow2' }}"
       - target:
           dev: vda
           bus: virtio
@@ -270,7 +253,7 @@
     xpath: /domain/devices/disk
     add_children:
       - source:
-          file: "{{ '/var/lib/libvirt/images/'+node_item.hostname+'-ci-data.img' }}"
+          file: "{{ '/var/lib/libvirt/images/'+node_item.value.hostname+'-ci-data.img' }}"
       - target:
           dev: hdb
           bus: ide
@@ -318,38 +301,39 @@
 
 - name: Populate network-config and add interface to xml file
   include_tasks: create_interfaces.yml
-  #extra_vars: "{{ network_config xml_file slot_address mac_address_counter }}"
   loop_control:
     loop_var: interface_item
-  with_items: "{{ node_item.interfaces }}"
+  with_dict: "{{ node_item.value.interfaces }}"
 
 - name: Create directory
   file:
-    path: "{{ '/tmp/'+node_item.hostname }}"
+    path: "{{ '/tmp/'+node_item.value.hostname }}"
     state: directory
     mode: 0755
 
 - name: Generate iso image
   shell: >
-    genisoimage -output {{ image_dir+node_item.hostname+'-ci-data.img' }} -volid cidata -joliet
-    -r {{ '/tmp/'+node_item.hostname+'/network-config' }} {{ '/tmp/'+node_item.hostname+'/user-data' }} {{ '/tmp/'+node_item.hostname+'/meta-data' }}
-    &>> {{ '/tmp/'+node_item.hostname+'/hostname.log' }}
+    genisoimage -output {{ image_dir+node_item.value.hostname+'-ci-data.img' }}
+    -volid cidata -joliet -r
+    {{ '/tmp/'+node_item.value.hostname+'/user-data' }}
+    {{ '/tmp/'+node_item.value.hostname+'/meta-data' }}
+    &>> {{ '/tmp/'+node_item.value.hostname+'/hostname.log' }}
 
 - name: Copy and convert the ubuntu image
   shell: >
-    qemu-img convert -O qcow2 {{ node_item.image }} {{ image_dir+node_item.hostname+'.qcow2' }}
+    qemu-img convert -O qcow2 {{ node_item.value.image }} {{ image_dir+node_item.value.hostname+'.qcow2' }}
 
 - name: Resize image
   shell: >
-    qemu-img resize {{ image_dir+node_item.hostname+'.qcow2' }} {{ node_item.disk }}M
+    qemu-img resize {{ image_dir+node_item.value.hostname+'.qcow2' }} {{ node_item.value.disk }}M
 
 - name: Define the VMs
   virt:
     command: define
-    name: "{{ node_item.hostname }}"
-    xml: "{{ lookup('file', '/tmp/'+node_item.hostname+'/'+node_item.hostname+'.xml') }}"
+    name: "{{ node_item.value.hostname }}"
+    xml: "{{ lookup('file', '/tmp/'+node_item.value.hostname+'/'+node_item.value.hostname+'.xml') }}"
 
 - name: Start the VMs
   virt:
     command: create
-    name: "{{ node_item.hostname }}"
+    name: "{{ node_item.value.hostname }}"

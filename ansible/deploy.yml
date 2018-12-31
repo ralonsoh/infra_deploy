@@ -19,7 +19,7 @@
     rs_file: "{{ RS_FILE }}"
     domain_type: "{{ DOMAIN_TYPE }}"
 
-  tasks:
+  pre_tasks:
   - set_fact:
       proxy_host: "{{ lookup('env', 'http_proxy') | urlsplit('hostname') }}"
       proxy_proto: "{{ lookup('env', 'http_proxy') | urlsplit('scheme') }}"
@@ -27,6 +27,21 @@
 
   - set_fact:
       proxy_host_ip: "{{ lookup('dig', proxy_host, errors='ignore') }}"
+
+  - name: Include input file
+    include_vars:
+      file: "{{ rs_file }}"
+      name: infra_deploy_vars
+
+  - set_fact:
+      node_interfaces: "{{ node_interfaces | default({}) | combine({item.key: interfaces}, recursive=true) }}"
+    vars:
+      interfaces: "{{ item.value.interfaces }}"
+    with_dict:
+      - "{{ infra_deploy_vars.nodes }}"
+
+  - set_fact:
+      mac_address_counter: 0
 
   roles:
     - role: install_dependencies

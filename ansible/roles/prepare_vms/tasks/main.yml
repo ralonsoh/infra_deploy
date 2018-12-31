@@ -12,14 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include input file
-  include_vars:
-    file: "{{ rs_file }}"
-    name: infra_deploy_vars
-
 - set_fact:
-    block_str: "{{ block_str | default('') + item.interfaces[0].ip + ' ' + item.hostname + '\n'}}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    block_str: "{{ block_str | default('') + item.value.interfaces['management'].ip + ' ' + item.value.hostname + '\n'}}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"
 
 - name: Delete hosts between markers
   blockinfile:
@@ -36,14 +31,14 @@
 
 - name: Clear known hosts
   shell: >
-    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.interfaces[0].ip }}";
-    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.hostname }}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.value.interfaces['management'].ip }}";
+    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.value.hostname }}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"
   ignore_errors: True
 
 - set_fact:
-    controllers: "{{ controllers | default([]) + [item.hostname] }}"
+    controllers: "{{ controllers | default([]) + [item.value.hostname] }}"
   when:
-    - item.openstack_node is defined
-    - item.openstack_node == 'controller'
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    - item.value.openstack_node is defined
+    - item.value.openstack_node == 'controller'
+  with_dict: "{{ infra_deploy_vars.nodes }}"

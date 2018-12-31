@@ -12,9 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Add MAC address per VM interface
+  include_tasks: add_mac_address.yml
+  loop_control:
+    loop_var: interface
+  with_dict:
+    - "{{ node_interfaces }}"
+
 - name: Define XML file name
   set_fact:
-    xml_file: "{{ '/tmp/'+item.name+'.xml' }}"
+    xml_file: "{{ '/tmp/'+network.key+'.xml' }}"
 
 - name: Delete the file, if exists
   file:
@@ -39,16 +46,16 @@
     path: "{{ xml_file }}"
     xpath: /network
     add_children:
-      - name: "{{ item.name }}"
+      - name: "{{ network.key }}"
       - forward:
           mode: nat
       - bridge:
-          name: "{{ item.name }}"
+          name: "{{ network.key }}"
           stp: "on"
           delay: "0"
       - ip:
-          address: "{{ item.host_ip }}"
-          netmask: "{{ item.netmask }}"
+          address: "{{ network.value.host_ip }}"
+          netmask: "{{ network.value.netmask }}"
     pretty_print: yes
 
 - name: Add new children nodes to "/network/ip" node
@@ -64,10 +71,14 @@
     path: "{{ xml_file }}"
     xpath: /network/ip/dhcp
     add_children:
-      - range:
-          start: "{{ item.dhcp_ip_start }}"
-          end: "{{ item.dhcp_ip_end }}"
+      - host:
+          mac: "{{ item.value[network.key].mac }}"
+          ip: "{{ item.value[network.key].ip }}"
     pretty_print: yes
+  with_dict:
+    - "{{ node_interfaces }}"
+  when:
+    - item.value[network.key] is defined
 
 - name: Add new children nodes to "/network/forward" node
   xml:
@@ -90,18 +101,18 @@
 - name: Define the networks
   virt_net:
     command: define
-    name: "{{ item.name }}"
+    name: "{{ network.key }}"
     xml: "{{ lookup('file', xml_file) }}"
 
 - name: Set autostart to yes
   virt_net:
     autostart: yes
-    name: "{{ item.name }}"
+    name: "{{ network.key }}"
 
 - name: Start the networks
   virt_net:
     command: start
-    name: "{{ item.name }}"
+    name: "{{ network.key }}"
 
 - name: Remove XML file
   file:

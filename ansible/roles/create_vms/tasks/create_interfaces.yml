@@ -12,44 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- set_fact:
-    mac_address_arg: "mac_address"
-
-- set_fact:
-    mac_address_arg: "macaddress"
-  when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_distribution_major_version|int >= 18
-
-- name: Add network-data
-  blockinfile:
-    path: "{{ network_config }}"
-    insertafter: 'ethernets:'
-    marker: "MARKER"
-    block: |2
-        {{ 'enp0s%d:'| format( slot_address | int) }}
-          match:
-            {{ mac_address_arg }}: {{ '52:54:00:5d:7d:%02x'| format( mac_address_counter | int) }}
-          addresses:
-            - {{ interface_item.ip }}/{{ (interface_item.ip + '/' + interface_item.netmask) | ipaddr('prefix') }}
-
-- name: Add default gateway
-  blockinfile:
-    path: "{{ network_config }}"
-    insertafter: "{{ interface_item.ip }}"
-    marker: "MARKER"
-    block: |2
-          gateway4: {{ default_bridge.host_ip }}
-  when:
-    - default_bridge is defined
-    - default_bridge.name == interface_item.network
-
-- name: Remove the marker introduced in network-data
-  lineinfile:
-    dest: "{{ network_config }}"
-    state: absent
-    regexp: "MARKER"
-
 - name: Add new children nodes to "domain" node
   xml:
     path: "{{ xml_file }}"
@@ -65,7 +27,7 @@
     xpath: /domain/devices/interface
     add_children:
       - source:
-          bridge: "{{ interface_item.network }}"
+          bridge: "{{ interface_item.key }}"
       - model:
           type: 'virtio'
       - address:
@@ -75,11 +37,8 @@
           slot: "{{ '0x%02x'| format( slot_address | int) }}"
           function: '0x0'
       - mac:
-          address: "{{ '52:54:00:5d:7d:%02x'| format( mac_address_counter | int) }}"
+          address: "{{ node_interfaces[node_item.key][interface_item.key].mac }}"
     pretty_print: yes
 
 - set_fact:
     slot_address: "{{ slot_address | int + 1 }}"
-
-- set_fact:
-    mac_address_counter: "{{ mac_address_counter | int + 1 }}"

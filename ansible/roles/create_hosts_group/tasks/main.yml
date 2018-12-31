@@ -18,10 +18,10 @@
 - name: Create "deploynodes" group
   add_host:
     groups: deploynodes
-    hostname: "{{ item.hostname }}"
-    host_ip: "{{ item.interfaces[0].ip }}"
-    ansible_host: "{{ item.hostname }}"
-    ansible_user: "{{ item.user }}"
-    ansible_ssh_pass: "{{ item.password }}"
-    root_password: "{{ item.root_password }}"
-  with_items: "{{ infra_deploy_vars.nodes }}"
+    hostname: "{{ item.value.hostname }}"
+    host_ip: "{{ item.value.interfaces['management'].ip }}"
+    ansible_host: "{{ item.value.hostname }}"
+    ansible_user: "{{ item.value.user }}"
+    ansible_ssh_pass: "{{ item.value.password }}"
+    root_password: "{{ item.value.root_password }}"
+  with_dict: "{{ infra_deploy_vars.nodes }}"

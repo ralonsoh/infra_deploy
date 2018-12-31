@@ -10,19 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- hosts: deployhost
-  vars:
-    rs_file: "{{ RS_FILE }}"
+- set_fact:
+    mac_address: "{{ '52:54:00:5d:7d:%02x'| format( mac_address_counter | int) }}"
 
-  pre_tasks:
-  - name: Include input file
-    include_vars:
-      file: "{{ rs_file }}"
-      name: infra_deploy_vars
+- set_fact:
+    mac_address_counter: "{{ mac_address_counter | int + 1 }}"
 
-  roles:
-    - destroy_previous_configuration
-
-  post_tasks:
-  - debug:
-      msg: "System clean"
+- name: Add MAC address per VM interface
+  set_fact:
+    node_interfaces: "{{ node_interfaces|combine({interface.key: {network.key: {'mac': mac_address}}}, recursive=True) }}"

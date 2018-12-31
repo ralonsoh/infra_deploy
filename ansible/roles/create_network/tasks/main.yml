@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include
-  include_vars:
-    file: "{{ rs_file }}"
-    name: infra_deploy_vars
-
 - name: Create XML file
   include_tasks: create_xml.yml
-  with_items: "{{ infra_deploy_vars.networks }}"
+  loop_control:
+    loop_var: network
+  with_dict: "{{ infra_deploy_vars.networks }}"
