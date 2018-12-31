@@ -12,7 +12,8 @@ nodes:
     user: stack
     password: stack
     root_password: password
-    image: /opt/stack/images/xenial_cloudimg.img
+    #image: /opt/stack/images/xenial_cloudimg.img
+    image: /opt/stack/images/bionic-server-cloudimg-amd64.img
     disk: 12000
     ram: 8192
     vcpus: 2

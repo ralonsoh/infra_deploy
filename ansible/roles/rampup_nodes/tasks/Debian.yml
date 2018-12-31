@@ -41,6 +41,7 @@
     - vim
     - emacs
     - x11-apps
+    - resolvconf
   environment: "{{ proxy_env }}"
 
 - name: Update pip ansible docker

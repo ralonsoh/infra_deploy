@@ -11,9 +11,6 @@
 # limitations under the License.
 ---
 # Configure proxy and install python to support ansible
-- name: Configure proxy, DNS and nameserver
-  include_tasks: configure_proxy_dns.yml
-
 - name: Install python which is required to run ansible modules (Debian)
   raw: apt-get update && apt-get install -y python3
   ignore_errors: yes
@@ -47,6 +44,9 @@
 
 - name: Install packets
   include_tasks: install_packets.yml
+
+- name: Configure proxy, DNS and nameserver
+  include_tasks: configure_proxy_dns.yml
 
 - name: Change root password
   include_tasks: change_root_password.yml
