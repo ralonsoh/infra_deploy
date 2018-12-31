@@ -15,11 +15,19 @@
 - include: "{{ ansible_os_family }}.yml"
   when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
 
-- name: Stop and disable libvirt
-  systemd:
+- name: Restart service libvirt (Ubuntu Xenial)
+  service:
+    name: libvirt-bin
     state: stopped
-    enabled: no
-    name: libvirt-bin.service
+    enabled: yes
+  ignore_errors: yes
+
+- name: Restart service libvirt (any other OS)
+  service:
+    name: libvirtd
+    state: stopped
+    enabled: yes
+  ignore_errors: yes
 
 - name: Stop and disable apparmor service
   systemd:

@@ -20,22 +20,12 @@
   service:
     name: libvirt-bin
     state: restarted
-  ignore_errors: yes
-
-- name: Enable service libvirt (Ubuntu Xenial)
-  service:
-    name: libvirt-bin
-    state: enable
+    enabled: yes
   ignore_errors: yes
 
 - name: Restart service libvirt (any other OS)
   service:
     name: libvirtd
     state: restarted
-  ignore_errors: yes
-
-- name: Enable service libvirt (any other OS)
-  service:
-    name: libvirtd
-    state: enable
+    enabled: yes
   ignore_errors: yes
