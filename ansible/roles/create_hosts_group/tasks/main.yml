@@ -22,6 +22,6 @@
     host_ip: "{{ item.value.interfaces['management'].ip }}"
     ansible_host: "{{ item.value.hostname }}"
     ansible_user: "{{ item.value.user }}"
-    ansible_ssh_pass: "{{ item.value.password }}"
+    #ansible_ssh_pass: "{{ item.value.password }}"
     root_password: "{{ item.value.root_password }}"
   with_dict: "{{ infra_deploy_vars.nodes }}"

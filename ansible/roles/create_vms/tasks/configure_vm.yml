@@ -54,6 +54,8 @@
             chpasswd: { expire: False }
             sudo: ALL=(ALL) NOPASSWD:ALL
             ssh_pwauth: True
+            ssh-authorized-keys:
+              - {{ root_public_key }}
 
 - name: Remove the marker
   lineinfile:

@@ -49,6 +49,11 @@
 - name: Fail if not enough Disk space
   set_fact:
     disk_avail: "{% for mount in ansible_mounts if mount.mount == '/' %}{{ (mount.size_available/1024/1024) | int }}{% endfor %}"
+
 - fail:
     msg: "Failed, not enough disk space, required {{ disk_t }}, available: {{ disk_avail }}"
   when: disk_avail|int < disk_t | int
+
+- name: Check root (this script is run in root mode) public key
+  set_fact:
+    root_public_key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
