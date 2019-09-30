@@ -50,8 +50,10 @@
       tags: destroy_nodes
     - role: check_requirements
       tags: build_nodes
-    - role: create_network
+    - role: populate_configuration
       tags: build_nodes
+    - role: create_network
+      tags: build_network
     - role: create_vms
       tags: build_nodes
     - role: prepare_vms
@@ -72,7 +74,8 @@
     rs_file: "{{ RS_FILE }}"
 
   roles:
-  - rampup_nodes
+    - role: rampup_nodes
+      tags: build_nodes
 
 
 # This should be the last step.
@@ -81,4 +84,5 @@
     rs_file: "{{ RS_FILE }}"
 
   roles:
-    - show_info
+    - role: show_info
+      tags: build_nodes

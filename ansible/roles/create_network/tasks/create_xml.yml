@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Add MAC address per VM interface
-  include_tasks: add_mac_address.yml
-  loop_control:
-    loop_var: interface
-  with_dict:
-    - "{{ node_interfaces }}"
-
 - name: Define XML file name
   set_fact:
     xml_file: "{{ '/tmp/'+network.key+'.xml' }}"
@@ -79,6 +72,32 @@
     - "{{ node_interfaces }}"
   when:
     - item.value[network.key] is defined
+
+- name: Define network IP address in network/prefix format
+  set_fact:
+    ip_net_prefix: "{{ item.value[network.key].ip }}/{{ item.value[network.key].netmask }}"
+  with_dict:
+    - "{{ node_interfaces }}"
+  when:
+    - item.value[network.key] is defined
+
+- name: Define the last usable IP address in the network
+  set_fact:
+    last_usable_ip: "{{ ip_net_prefix | ipaddr('network/prefix') | ipaddr('last_usable') }}"
+  when:
+    - ip_net_prefix is defined
+
+- name: Add new children nodes to "/network/ip/dhcp" node
+  xml:
+    path: "{{ xml_file }}"
+    xpath: /network/ip/dhcp
+    add_children:
+      - range:
+          start: "{{ last_usable_ip }}"
+          end: "{{ last_usable_ip }}"
+    pretty_print: yes
+  when:
+    - last_usable_ip is defined
 
 - name: Add new children nodes to "/network/forward" node
   xml:
