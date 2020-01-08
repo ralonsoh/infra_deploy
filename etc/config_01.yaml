@@ -12,29 +12,28 @@ nodes:
     user: stack
     password: stack
     root_password: password
-    #image: /opt/stack/images/xenial_cloudimg.img
-    image: /opt/stack/images/bionic-server-cloudimg-amd64.img
-    disk: 8000
-    ram: 2000
-    vcpus: 4
-  VM2:
-    openstack_node: vm1
-    hostname: controller
-    interfaces:
-      management: # Mandatory
-        ip: 192.168.220.11
-        netmask: 255.255.255.0
-      traffic:
-        ip: 192.168.230.11
-        netmask: 255.255.255.0
-    user: stack
-    password: stack
-    root_password: password
-    #image: /opt/stack/images/xenial_cloudimg.img
-    image: /opt/stack/images/bionic-server-cloudimg-amd64.img
-    disk: 12000
+    #image: /opt/stack/images/bionic-server-cloudimg-amd64.img
+    image: /opt/stack/images/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    disk: 6000
     ram: 8192
-    vcpus: 2
+    vcpus: 4
+#  VM2:
+#    openstack_node: vm1
+#    hostname: controller
+#    interfaces:
+#      management: # Mandatory
+#        ip: 192.168.110.11
+#        netmask: 255.255.255.0
+#      traffic:
+#        ip: 192.168.120.11
+#        netmask: 255.255.255.0
+#    user: stack
+#    password: stack
+#    root_password: password
+#    image: /opt/stack/images/Fedora-Cloud-Base-31-1.9.x86_64.raw
+#    disk: 6000
+#    ram: 8192
+#    vcpus: 2
 
 networks:
   management: # Mandatory
@@ -52,4 +51,3 @@ networks:
     dhcp_ip_end: 192.168.120.250
 
 #END
-

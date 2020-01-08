@@ -1,5 +1,3 @@
-# Copyright (c) 2018 Intel Corporation.
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,22 +10,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- include: "{{ ansible_os_family }}.yml"
-  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
-
-- name: Restart service libvirt (Ubuntu Xenial)
-  service:
-    name: libvirt-bin
+- name: Stop and disable apparmor service
+  systemd:
+    name: apparmor
     state: stopped
-    enabled: yes
-  ignore_errors: yes
+    enabled: no
 
-- name: Restart service libvirt (any other OS)
-  service:
-    name: libvirtd
-    state: stopped
-    enabled: yes
-  ignore_errors: yes
+- name: Get stat of libvirtd apparmor profile
+  stat:
+    path: /etc/apparmor.d/disable/usr.sbin.libvirtd
+  register: apparmor_libvirtd_profile
 
-- include: "{{ ansible_os_family }}_security.yml"
-  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+- name: Remove apparmor profile for libvirt
+  shell: ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/ && apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
+  when:
+    - apparmor_libvirtd_profile.stat.exists == False

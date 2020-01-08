@@ -12,11 +12,7 @@
 ---
 # Configure proxy and install python to support ansible
 - name: Install python which is required to run ansible modules (Debian)
-  raw: apt-get update && apt-get install -y python3
-  ignore_errors: yes
-
-- name: Install python which is required to run ansible modules (Red Hat)
-  raw: yum update && yum install -y python3
+  raw: sudo apt-get update && sudo apt-get install -y python3
   ignore_errors: yes
 
 - name: Enable root SSH
@@ -45,8 +41,9 @@
 - name: Install packets
   include_tasks: install_packets.yml
 
-- name: Configure proxy, DNS and nameserver
-  include_tasks: configure_proxy_dns.yml
+#TODO: handle RedHat/Fedora case.
+#- name: Configure proxy, DNS and nameserver
+#  include_tasks: configure_proxy_dns.yml
 
 - name: Change root password
   include_tasks: change_root_password.yml

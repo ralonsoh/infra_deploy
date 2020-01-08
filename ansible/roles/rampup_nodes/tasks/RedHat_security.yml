@@ -10,12 +10,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Generate root password hash
-  raw: python3 -c "from passlib.hash import sha512_crypt; print(sha512_crypt.hash('{{ hostvars[inventory_hostname].root_password }}'))"
-  register: root_password_hash
-
-- name: Set root password
-  user:
-    name: root
-    password: "{{ root_password_hash['stdout_lines'][0] }}"
-    update_password: always
+#TODO: disable SELinux in RedHat/Fedora.
