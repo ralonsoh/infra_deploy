@@ -19,7 +19,7 @@
   add_host:
     groups: deploynodes
     hostname: "{{ item.value.hostname }}"
-    host_ip: "{{ item.value.interfaces['management'].ip }}"
+    host_ip: "{{ item.value.interfaces['infra_mgt'].ip }}"
     ansible_host: "{{ item.value.hostname }}"
     ansible_user: "{{ item.value.user }}"
     #ansible_ssh_pass: "{{ item.value.password }}"

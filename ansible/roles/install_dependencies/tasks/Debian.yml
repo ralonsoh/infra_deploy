@@ -15,6 +15,7 @@
 - name: Update repositories
   apt:
     update_cache: yes
+  environment: "{{ proxy_env }}"
 
 - name: Install core packages
   apt:
@@ -27,6 +28,15 @@
     - pkg-config
     - libvirt-dev
     - sshpass
+  environment: "{{ proxy_env }}"
+
+- name: Update pip
+  pip:
+    name: "{{ item }}"
+    state: forcereinstall
+  with_items:
+    - pip
+  environment: "{{ proxy_env }}"
 
 - name: Update pip ansible docker
   pip:
@@ -38,5 +48,5 @@
     - setuptools
     - lxml
     - netaddr
-    - libvirt-python
+    #- libvirt-python --> installed with "libvirt-dev"
   environment: "{{ proxy_env }}"

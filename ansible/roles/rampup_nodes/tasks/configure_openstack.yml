@@ -10,16 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include input file
-  include_vars:
-    file: "{{ rs_file }}"
-    name: infra_deploy_vars
+- git:
+    repo: "https://foosball.example.org/path/to/repo.git"
+    dest: "{{ OPENSTACK_DIRECTORY}}devstack"
+    version: "{{ OPENSTACK_BRANCH }}"
 
-- name: Show information
-  debug:
-    msg:
-      - "Host: {{ item.value.hostname }}"
-      - "    IP: {{ item.value.interfaces['infra_mgt'].ip }}"
-      - "    User / password: {{ item.value.user }} / {{ item.value.password }}"
-      - "      --> ssh {{ item.value.user }}@{{ item.value.interfaces['infra_mgt'].ip }}"
-  with_dict: "{{ infra_deploy_vars.nodes }}"

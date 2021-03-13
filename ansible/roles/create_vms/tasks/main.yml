@@ -30,7 +30,7 @@
 
 - name: Create list of dictionaries with vm name, ip address
   set_fact:
-    vm_name_ip: "{{ vm_name_ip|default([]) + [{item.value.hostname: item.value.interfaces['management'].ip}] }}"
+    vm_name_ip: "{{ vm_name_ip|default([]) + [{item.value.hostname: item.value.interfaces['infra_mgt'].ip}] }}"
   with_dict: "{{ infra_deploy_vars.nodes }}"
 
 - name: Make sure VM is reachable

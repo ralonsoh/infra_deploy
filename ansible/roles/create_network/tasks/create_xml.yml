@@ -87,17 +87,23 @@
   when:
     - ip_net_prefix is defined
 
+- name: DEBUG
+  ansible.builtin.debug:
+    msg: "{{ infra_deploy_vars.networks }}"
+
 - name: Add new children nodes to "/network/ip/dhcp" node
   xml:
     path: "{{ xml_file }}"
     xpath: /network/ip/dhcp
     add_children:
       - range:
-          start: "{{ last_usable_ip }}"
-          end: "{{ last_usable_ip }}"
+          start: "{{ item.value.dhcp_ip_start }}"
+          end: "{{ item.value.dhcp_ip_end }}"
     pretty_print: yes
+  with_dict:
+    - "{{ infra_deploy_vars.networks }}"
   when:
-    - last_usable_ip is defined
+    - item.key == network.key
 
 - name: Add new children nodes to "/network/forward" node
   xml:

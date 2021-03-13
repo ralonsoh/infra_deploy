@@ -17,6 +17,26 @@
     cache_valid_time: 36000
   environment: "{{ proxy_env }}"
 
+- name: DEBUG
+  ansible.builtin.debug:
+    msg: "{{ ansible_facts }}"
+
+- name: Install packets (<=18)
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - libvirt-bin
+  when:
+    - ansible_distribution_major_version|int <= 18
+
+- name: Install packets (>18)
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - libvirt0
+  when:
+    - ansible_distribution_major_version|int > 18
+
 - name: Install packets
   apt:
     name: "{{ item }}"
@@ -31,7 +51,6 @@
     - ntp
     - apparmor-utils
     - docker.io
-    - libvirt-bin
     - build-essential
     - virt-manager
     - screen
@@ -42,6 +61,9 @@
     - emacs
     - x11-apps
     - resolvconf
+    - net-tools
+    - wireshark
+    - tshark
   environment: "{{ proxy_env }}"
 
 - name: Update pip ansible docker

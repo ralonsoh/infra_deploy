@@ -6,7 +6,7 @@ ansible script, using the inventory file defined by the user (e.g.
 linux brige) and the virtual machines.
 
 In order to define the user and the password, and the management network
-configuration, this project uses `cloud-init NoCloud`_.
+("infra_mgt") configuration, this project uses `cloud-init NoCloud`_.
 
 
 Requirements

@@ -31,6 +31,8 @@
     - libvirt
     - yum-utils
     - gcc
+    - net-tools
+    - wireshark
   environment: "{{ proxy_env }}"
 
 - name: Install pip

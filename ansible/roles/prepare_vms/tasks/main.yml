@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 - set_fact:
-    block_str: "{{ block_str | default('') + item.value.interfaces['management'].ip + ' ' + item.value.hostname + '\n'}}"
+    block_str: "{{ block_str | default('') + item.value.interfaces['infra_mgt'].ip + ' ' + item.value.hostname + '\n'}}"
   with_dict: "{{ infra_deploy_vars.nodes }}"
 
 - name: Delete hosts between markers
@@ -31,7 +31,7 @@
 
 - name: Clear known hosts
   shell: >
-    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.value.interfaces['management'].ip }}";
+    ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.value.interfaces['infra_mgt'].ip }}";
     ssh-keygen -f /root/.ssh/known_hosts -R "{{ item.value.hostname }}"
   with_dict: "{{ infra_deploy_vars.nodes }}"
   ignore_errors: True

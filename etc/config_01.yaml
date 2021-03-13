@@ -3,47 +3,48 @@ nodes:
     openstack_node: vm1
     hostname: controller
     interfaces:
-      management: # Mandatory
+      infra_mgt: # Mandatory, do not change the name
         ip: 192.168.110.10
         netmask: 255.255.255.0
-      traffic:
+      infra_traffic1:
         ip: 192.168.120.10
         netmask: 255.255.255.0
     user: stack
     password: stack
     root_password: password
     #image: /opt/stack/images/bionic-server-cloudimg-amd64.img
-    image: /opt/stack/images/Fedora-Cloud-Base-31-1.9.x86_64.raw
-    disk: 6000
+    #image: /opt/stack/images/Fedora-Cloud-Base-31-1.9.x86_64.raw
+    image: /opt/stack/images/focal-server-cloudimg-amd64-disk-kvm.img
+    disk: 20000
     ram: 8192
-    vcpus: 4
-#  VM2:
-#    openstack_node: vm1
-#    hostname: controller
-#    interfaces:
-#      management: # Mandatory
-#        ip: 192.168.110.11
-#        netmask: 255.255.255.0
-#      traffic:
-#        ip: 192.168.120.11
-#        netmask: 255.255.255.0
-#    user: stack
-#    password: stack
-#    root_password: password
-#    image: /opt/stack/images/Fedora-Cloud-Base-31-1.9.x86_64.raw
-#    disk: 6000
-#    ram: 8192
-#    vcpus: 2
+    vcpus: 2
+  VM2:
+    openstack_node: vm2
+    hostname: compute
+    interfaces:
+      infra_mgt: # Mandatory, do not change the name
+        ip: 192.168.110.20
+        netmask: 255.255.255.0
+      infra_traffic1:
+        ip: 192.168.120.20
+        netmask: 255.255.255.0
+    user: stack
+    password: stack
+    root_password: password
+    image: /opt/stack/images/focal-server-cloudimg-amd64-disk-kvm.img
+    disk: 20000
+    ram: 8192
+    vcpus: 2
 
 networks:
-  management: # Mandatory
+  infra_mgt: # Mandatory, do not change the name
     default_gateway: True
     host_ip: 192.168.110.1
     netmask: 255.255.255.0
     dhcp_ip_start: 192.168.110.200
     dhcp_ip_end: 192.168.110.250
 
-  traffic:
+  infra_traffic1:
     default_gateway: False # This parameter is not mandatory, default value: False
     host_ip: 192.168.120.1
     netmask: 255.255.255.0
