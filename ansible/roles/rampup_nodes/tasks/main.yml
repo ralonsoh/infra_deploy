@@ -62,7 +62,3 @@
 
 - name: Configure SSH service
   include_tasks: configure_sshd.yml
-
-- name: Configure OpenStack services
-  include_tasks: configure_openstack.yml
-

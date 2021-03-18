@@ -6,7 +6,15 @@ ansible script, using the inventory file defined by the user (e.g.
 linux brige) and the virtual machines.
 
 In order to define the user and the password, and the management network
-("infra_mgt") configuration, this project uses `cloud-init NoCloud`_.
+("infra_mgt") configuration, this project uses `cloud-init NoCloud`_. This
+network is mandatory.
+
+In OpenStack deployments:
+
+* "infra_tenant": is the tenant network, for VLAN or tunneled networks. In
+  tunneled networks, the local IP will be the one assigned to the
+  "infra_tenant" interface in this machine.
+* "infra_ext": is the external (provider) network.
 
 
 Requirements

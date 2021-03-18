@@ -20,27 +20,27 @@ nodes:
     disk: 20000
     ram: 8192
     vcpus: 2
-  VM2:
-    openstack_node: vm2
-    hostname: compute
-    openstack_role: compute
-    interfaces:
-      infra_mgt: # Mandatory, do not change the name
-        ip: 192.168.110.20
-        netmask: 255.255.255.0
-      infra_tenant:
-        ip: 192.168.120.20
-        netmask: 255.255.255.0
-      infra_ext:
-        ip: 192.168.130.20
-        netmask: 255.255.255.0
-    user: stack
-    password: stack
-    root_password: password
-    image: /opt/stack/images/focal-server-cloudimg-amd64-disk-kvm.img
-    disk: 20000
-    ram: 8192
-    vcpus: 2
+#  VM2:
+#    openstack_node: vm2
+#    hostname: compute
+#    openstack_role: compute
+#    interfaces:
+#      infra_mgt: # Mandatory, do not change the name
+#        ip: 192.168.110.20
+#        netmask: 255.255.255.0
+#      infra_tenant:
+#        ip: 192.168.120.20
+#        netmask: 255.255.255.0
+#      infra_ext:
+#        ip: 192.168.130.20
+#        netmask: 255.255.255.0
+#    user: stack
+#    password: stack
+#    root_password: password
+#    image: /opt/stack/images/focal-server-cloudimg-amd64-disk-kvm.img
+#    disk: 20000
+#    ram: 8192
+#    vcpus: 2
 
 networks:
   infra_mgt: # Mandatory, do not change the name

@@ -10,8 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- git:
-    repo: "https://foosball.example.org/path/to/repo.git"
-    dest: "{{ OPENSTACK_DIRECTORY}}devstack"
-    version: "{{ OPENSTACK_BRANCH }}"
-
+- name: Install Open vSwitch
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - openvswitch-switch
+    - libibverbs-dev
+  environment: "{{ proxy_env }}"

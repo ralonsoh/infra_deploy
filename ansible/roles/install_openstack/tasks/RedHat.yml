@@ -10,8 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: X11 forwarding server should be bound to the wildcard address
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^#X11UseLocalhost yes'
-    line: 'X11UseLocalhost no'
+- name: Install Open vSwitch
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - openvswitch
+    - libibverbs
+  environment: "{{ proxy_env }}"

@@ -76,7 +76,8 @@
   roles:
     - role: rampup_nodes
       tags: build_nodes
-
+    - role: install_openstack
+      tags: install_openstack
 
 # This should be the last step.
 - hosts: deployhost

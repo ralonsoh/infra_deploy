@@ -1,0 +1,51 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+# Download, configure and deploy OpenStack
+- name: Download devstack
+  git:
+    repo: "https://opendev.org/openstack/devstack.git"
+    dest: "{{ working_directory }}devstack"
+    version: "{{ openstack_branch }}"
+
+- name: Recursively change ownership of Devstack directory (VM defined user, e.g. "stack")
+  ansible.builtin.file:
+    owner: "{{ hostvars[inventory_hostname].ansible_user }}"
+    group: "{{ hostvars[inventory_hostname].ansible_user }}"
+    path: "{{ working_directory }}"
+    state: directory
+    recurse: yes
+
+- name: Install Open vSwitch
+  include: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+
+# NOTE(ralonsoh): this should be conditional to the chosen network backend.
+- name: Create OVS bridges
+  include_tasks: deploy_ovs_network.yml
+
+
+
+- name: DEBUG
+  ansible.builtin.debug:
+    msg: "{{ hostvars[inventory_hostname].ansible_user }}"
+    #msg: "{{ ansible_facts }}"
+    #msg: "{{ ansible_facts['ansible_interfaces'] }}"
+
+
+
+
+#- name: DEBUG
+#  ansible.builtin.debug:
+#    msg: "{{ hostvars[inventory_hostname] }}"
+#    #msg: "{{ ansible_facts }}"
+#    #msg: "{{ ansible_facts['ansible_interfaces'] }}"

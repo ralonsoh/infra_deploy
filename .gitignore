@@ -1,0 +1,6 @@
+# Testing
+venv/
+
+# Development
+.idea/
+

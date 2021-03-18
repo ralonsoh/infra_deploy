@@ -10,8 +10,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: X11 forwarding server should be bound to the wildcard address
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^#X11UseLocalhost yes'
-    line: 'X11UseLocalhost no'
+- name: Create physical bridge
+  openvswitch_bridge:
+    bridge: "{{ openstack_physical_bridge }}"
+    state: present
+
+# NOTE(ralonsoh): the interface name is hardcoded for now.
+- name: Add network interface to physical bridge.
+  openvswitch_port:
+    bridge: "{{ openstack_physical_bridge }}"
+    port: enp0s6
+    state: present
+
+- name: Create external bridge
+  openvswitch_bridge:
+    bridge: "{{ openstack_external_bridge }}"
+    state: present

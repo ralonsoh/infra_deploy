@@ -53,5 +53,5 @@ done
 ANSIBLE_SCRIPTS="${0%/*}/../ansible"
 cd ${ANSIBLE_SCRIPTS} && \
 sudo -EH ansible-playbook \
-    -e RS_FILE='../etc/config_01.yaml' ${extra_args} \
+    -e RS_FILE='../etc/config_02_ovs.yaml' ${extra_args} \
     -i inventory.ini deploy.yml ${tags} -vvv
