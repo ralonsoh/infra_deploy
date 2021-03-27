@@ -66,17 +66,36 @@
     - tshark
   environment: "{{ proxy_env }}"
 
-- name: Update pip ansible docker
+- name: Remove python-yaml (Ubuntu 18)
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - python3-yaml
+  environment: "{{ proxy_env }}"
+  when:
+    - ansible_distribution_major_version|int <= 18
+
+- name: Update pip (before executing any other pip command)
   pip:
     name: "{{ item }}"
     state: latest
   with_items:
-    - ansible
+    - pip
+  environment: "{{ proxy_env }}"
+
+- name: Update pip packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - setuptools
+    - setuptools_rust
     - docker
     - tox
     - shade
     - passlib
-    - setuptools
+    - ansible
   environment: "{{ proxy_env }}"
 
 - name: Remove conflicting packages

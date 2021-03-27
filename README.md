@@ -6,7 +6,7 @@ ansible script, using the inventory file defined by the user (e.g.
 linux brige) and the virtual machines.
 
 In order to define the user and the password, and the management network
-("infra_mgt") configuration, this project uses `cloud-init NoCloud`_. This
+("infra_mgt") configuration, this project uses cloud-init NoCloud [1]_ . This
 network is mandatory.
 
 In OpenStack deployments:
@@ -17,6 +17,19 @@ In OpenStack deployments:
 * "infra_ext": is the external (provider) network.
 
 
+Compatibility
+-------------
+These are the host OS tested:
+
+* Ubuntu 20.04 server and desktop
+* Ubuntu 20.10 desktop
+
+These are the guest OS tested:
+
+* Ubuntu 18.04 server cloud image
+* Ubuntu 20.04 server cloud image
+
+
 Requirements
 ------------
 ansible >= 2.6.4
@@ -24,4 +37,4 @@ ansible >= 2.6.4
 
 References
 ==========
-.. _`cloud-init NoCloud`: https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
+.. [1]: https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
